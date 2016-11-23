@@ -5,6 +5,13 @@
 // For usage and documentation:
 // http://epoxyjs.org
 
+///////////////////////////////////////////////////////////////////////
+//Jaspersoft Updates (look for comment: JASPERSOFT #x)
+///////////////////////////////////////////////////////////////////////
+// #1 updated binding handler for the "options" function with possibility to use className property
+//
+///////////////////////////////////////////////////////////////////////
+
 (function(root, factory) {
 
   if (typeof exports !== 'undefined') {
@@ -502,10 +509,13 @@
   // Epoxy.binding -> Binding API
   // ----------------------------
 
+  //JASPERSOFT #1
   var bindingSettings = {
     optionText: 'label',
-    optionValue: 'value'
+    optionValue: 'value',
+    optionClass: 'className'
   };
+  //END JASPERSOFT #1
 
 
   // Cache for storing binding parser functions:
@@ -794,8 +804,13 @@
         // Set both label and value as the raw option object by default:
         var label = option;
         var value = option;
+        var className = option;
         var textAttr = bindingSettings.optionText;
         var valueAttr = bindingSettings.optionValue;
+        //JASPERSOFT #1
+        var classAttr = bindingSettings.optionClass;
+        var optionClass;
+        //END JASPERSOFT #1
 
         // Dig deeper into label/value settings for non-primitive values:
         if (isObject(option)) {
@@ -803,9 +818,21 @@
           // a model's 'get' method is used to access potential computed values.
           label = isModel(option) ? option.get(textAttr) : option[ textAttr ];
           value = isModel(option) ? option.get(valueAttr) : option[ valueAttr ];
+          //JASPERSOFT #1
+          className = isModel(option) ? option.get(classAttr) : option[ classAttr ];
+          //END JASPERSOFT #1
         }
 
-        return ['<option value="', value, '">', label, '</option>'].join('');
+        //JASPERSOFT #1
+
+        if (className) {
+          optionClass = 'class="' + className + '"';
+        } else {
+          optionClass = '';
+        }
+
+        return ['<option value="', value, '"', optionClass , '>', label, '</option>'].join('');
+        //END JASPERSOFT #1
       },
       clean: function() {
         this.d = this.e = this.v = 0;
